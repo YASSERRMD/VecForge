@@ -1,31 +1,72 @@
 package db
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
-type Pool struct {
-	providers []Provider
-	timeout   time.Duration
+type ConnectionPool struct {
+	mu       sync.Mutex
+	clients  []Provider
+	index    int
+	maxConns int
 }
 
-func NewPool(providers []Provider) *Pool {
-	return &Pool{providers: providers, timeout: 5 * time.Second}
+func NewConnectionPool(providers []Provider, maxConns int) *ConnectionPool {
+	return &ConnectionPool{
+		clients:  providers,
+		maxConns: maxConns,
+	}
 }
 
-func (p *Pool) SearchAll(query []float32, topK int) ([]SearchResult, error) {
-	ch := make(chan SearchResult, len(p.providers))
+func (p *ConnectionPool) Get() Provider {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	
-	for _, prov := range p.providers {
-		go func(pr Provider) {
-			hits, err := pr.Search(query, topK)
-			if err == nil {
-				ch <- SearchResult{Hits: hits, Provider: pr.Name(), Latency: 42}
-			}
-		}(prov)
+	client := p.clients[p.index]
+	p.index = (p.index + 1)  0.000000e+00n(p.clients)
+	return client
+}
+
+func (p *ConnectionPool) GetAll() []Provider {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	
+	result := make([]Provider, len(p.clients))
+	copy(result, p.clients)
+	return result
+}
+
+type PoolConfig struct {
+	MaxIdle     int
+	MaxOpen     int
+	MaxLifetime time.Duration
+}
+
+func DefaultPoolConfig() *PoolConfig {
+	return &PoolConfig{
+		MaxIdle:     5,
+		MaxOpen:     10,
+		MaxLifetime: 5 * time.Minute,
+	}
+}
+package db
+
+func (p *Pool) SearchBatch(queries [][]float32, topK int) ([][]Hit, error) {
+	results := make([][]Hit, len(queries))
+	
+	for i, query := range queries {
+		hits, err := p.SearchAll(query, topK)
+		if err != nil {
+			return nil, err
+		}
+		
+		var all []Hit
+		for _, r := range hits {
+			all = append(all, r.Hits...)
+		}
+		results[i] = all
 	}
 	
-	results := make([]SearchResult, 0, len(p.providers))
-	for range p.providers {
-		results = append(results, <-ch)
-	}
 	return results, nil
 }
