@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VecForge</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .search-box { margin: 20px 0; }
+        .results { margin-top: 20px; }
+        .hit { padding: 10px; border: 1px solid #ddd; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>VecForge - Vector Gateway</h1>
+    <div class="search-box">
+        <input type="text" name="q" placeholder="Search..." hx-post="/v1/search" hx-trigger="keyup changed delay:300ms" hx-target="#results">
+        <select name="providers" multiple>
+            <option value="qdrant" selected>Qdrant</option>
+            <option value="weaviate" selected>Weaviate</option>
+        </select>
+    </div>
+    <div id="results" class="results"></div>
+</body>
+</html>
