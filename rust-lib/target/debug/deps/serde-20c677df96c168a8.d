@@ -1,0 +1,14 @@
+/Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/deps/serde-20c677df96c168a8.d: /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/build/serde-53b1d5a660df5d9d/out/private.rs
+
+/Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/deps/libserde-20c677df96c168a8.rlib: /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/build/serde-53b1d5a660df5d9d/out/private.rs
+
+/Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/deps/libserde-20c677df96c168a8.rmeta: /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/build/serde-53b1d5a660df5d9d/out/private.rs
+
+/Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/mdyasser/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/build/serde-53b1d5a660df5d9d/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/mdyasser/Documents/projects/VecForge/rust-lib/target/debug/build/serde-53b1d5a660df5d9d/out
