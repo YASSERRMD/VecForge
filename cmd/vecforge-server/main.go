@@ -2,14 +2,33 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 )
+
+type SearchRequest struct {
+	Query     string   `json:"q"`
+	Providers []string `json:"providers"`
+	Limit     int      `json:"limit"`
+}
+
+type Hit struct {
+	ID       string  `json:"id"`
+	Score   float64 `json:"score"`
+	Provider string `json:"provider"`
+}
+
+type SearchResponse struct {
+	Hits      []Hit  `json:"hits"`
+	Query     string `json:"query"`
+	LatencyUs int64  `json:"latency_us"`
+	Provider  string `json:"provider"`
+}
 
 func main() {
 	router := http.NewServeMux()
@@ -23,8 +42,25 @@ func main() {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
+		var req SearchRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "invalid request", http.StatusBadRequest)
+			return
+		}
+		if req.Limit == 0 {
+			req.Limit = 10
+		}
+		resp := SearchResponse{
+			Hits: []Hit{
+				{ID: "doc_1", Score: 0.95, Provider: "qdrant"},
+				{ID: "doc_2", Score: 0.87, Provider: "weaviate"},
+			},
+			Query:     req.Query,
+			LatencyUs: 42,
+			Provider:  "fused",
+		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte("{\"hits\":[],\"query\":\"\",\"latency_us\":0,\"provider\":\"fused\"}"))
+		json.NewEncoder(w).Encode(resp)
 	})
 
 	srv := &http.Server{
@@ -66,17 +102,8 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func requestIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := randomID()
+		id := time.Now().Format("20060102150405")
 		w.Header().Set("X-Request-ID", id)
 		next.ServeHTTP(w, r)
 	})
-}
-
-func randomID() string {
-	const letters = "abcdefghijklmnopqrstuvwxyz0123456789"
-	b := make([]byte, 8)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
 }
