@@ -18,13 +18,17 @@ func main() {
 	})
 
 	router.HandleFunc("/v1/search", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte("{\"hits\":[],\"query\":\"\",\"latency_us\":0,\"provider\":\"demo\"}"))
+		w.Write([]byte("{\"hits\":[],\"query\":\"\",\"latency_us\":0,\"provider\":\"fused\"}"))
 	})
 
 	srv := &http.Server{
 		Addr:         ":8080",
-		Handler:      router,
+		Handler:      loggingMiddleware(router),
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 	}
@@ -49,4 +53,12 @@ func main() {
 	}
 
 	log.Println("Server exited")
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		next.ServeHTTP(w, r)
+		log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(start))
+	})
 }
