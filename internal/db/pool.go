@@ -50,3 +50,23 @@ func DefaultPoolConfig() *PoolConfig {
 		MaxLifetime: 5 * time.Minute,
 	}
 }
+package db
+
+func (p *Pool) SearchBatch(queries [][]float32, topK int) ([][]Hit, error) {
+	results := make([][]Hit, len(queries))
+	
+	for i, query := range queries {
+		hits, err := p.SearchAll(query, topK)
+		if err != nil {
+			return nil, err
+		}
+		
+		var all []Hit
+		for _, r := range hits {
+			all = append(all, r.Hits...)
+		}
+		results[i] = all
+	}
+	
+	return results, nil
+}
