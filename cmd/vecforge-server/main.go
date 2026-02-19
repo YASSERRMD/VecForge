@@ -14,7 +14,12 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{"status":"ok"}`))
+		w.Write([]byte("{\"status\":\"ok\"}"))
+	})
+
+	router.HandleFunc("/v1/search", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte("{\"hits\":[],\"query\":\"\",\"latency_us\":0,\"provider\":\"demo\"}"))
 	})
 
 	srv := &http.Server{
