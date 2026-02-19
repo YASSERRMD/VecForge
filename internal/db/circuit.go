@@ -80,3 +80,13 @@ func (cb *CircuitBreaker) recordResult(err error) {
 		}
 	}
 }
+package db
+
+import "testing"
+
+func TestCircuitBreaker(t *testing.T) {
+	cb := NewCircuitBreaker(3, 1)
+	
+	err := cb.Execute(func() error { return nil })
+	if err != nil {
+		t.Errorf("expected nil error, got 
