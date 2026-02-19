@@ -1,0 +1,11 @@
+# Dependencies
+go.work use ./cmd/vecforge-server
+
+# Tooling
+golangci-lint
+air
+caddy
+
+# Dev
+docker
+docker-compose
