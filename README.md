@@ -6,6 +6,7 @@
 [![Rust Version](https://img.shields.io/badge/Rust-1.75+-yellow)](https://rust-lang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Build Status](https://github.com/YASSERRMD/VecForge/actions/workflows/ci.yml/badge.svg)](https://github.com/YASSERRMD/VecForge/actions)
+[![Powered by](https://img.shields.io/badge/Powered_by-Ollama_MiniMax_M2.5-FF6C37?style=flat&logo=openai)](https://ollama.ai)
 
 **High-Performance Vector Gateway with Multi-DB Support**
 
@@ -149,5 +150,7 @@ MIT License - see [LICENSE](LICENSE)
 <div align="center">
 
 Built with ⚡ by [YASSERRMD](https://github.com/YASSERRMD)
+
+**Developed using Ollama MiniMax M2.5 Cloud model via [opencode](https://opencode.ai)**
 
 </div>
