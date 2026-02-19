@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
@@ -28,7 +29,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         ":8080",
-		Handler:      loggingMiddleware(router),
+		Handler:      requestIDMiddleware(loggingMiddleware(router)),
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 	}
@@ -61,4 +62,21 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 		log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(start))
 	})
+}
+
+func requestIDMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := randomID()
+		w.Header().Set("X-Request-ID", id)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func randomID() string {
+	const letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+	b := make([]byte, 8)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }
