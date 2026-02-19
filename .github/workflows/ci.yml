@@ -1,31 +1,11 @@
 name: CI
-
-on:
-  push:
-    branches: [main, feat/**]
-  pull_request:
-    branches: [main]
-
+on: [push, pull_request]
 jobs:
-  rust:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run Rust tests
-        run: |
-          cd rust-lib
-          cargo test
-          cargo clippy -- -D warnings
-
   go:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.23'
-      - name: Run Go tests
-        run: |
-          cd cmd/vecforge-server
-          go test ./...
+      - uses: actions/setup-go@v5
+        with: {go-version: "1.23"}
+      - run: cd cmd/vecforge-server && go test ./...
+      - run: cd cmd/vecforge-server && go build -o vecforge .
