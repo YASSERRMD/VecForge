@@ -1,11 +1,34 @@
 # Dependencies
 go.work use ./cmd/vecforge-server
 
-# Tooling
-golangci-lint
-air
-caddy
+# Rust
+rust-lib/target/
+rust-lib/*.h
+rust-lib/Cargo.lock
+
+# Go
+bin/
+cmd/vecforge-server/*.exe
+cmd/vecforge-server/*.dll
+cmd/vecforge-server/*.so
+cmd/vecforge-server/*.dylib
+cmd/vecforge-server/go.sum
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Dev
 docker
 docker-compose
+
+# Tooling
+golangci-lint
+air
+caddy
