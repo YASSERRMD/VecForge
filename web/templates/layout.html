@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VecForge</title>
+    <title>VecForge Dashboard</title>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body { font-family: system-ui, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .search-box { margin: 20px 0; }
-        .results { margin-top: 20px; }
-        .hit { padding: 10px; border: 1px solid #ddd; margin: 5px 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .htmx-indicator { opacity: 0; }
+        .htmx-request .htmx-indicator { opacity: 1; }
     </style>
 </head>
-<body>
-    <h1>VecForge - Vector Gateway</h1>
-    <div class="search-box">
-        <input type="text" name="q" placeholder="Search..." hx-post="/v1/search" hx-trigger="keyup changed delay:300ms" hx-target="#results">
-        <select name="providers" multiple>
-            <option value="qdrant" selected>Qdrant</option>
-            <option value="weaviate" selected>Weaviate</option>
-        </select>
-    </div>
-    <div id="results" class="results"></div>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">VecForge</h1>
+            <div class="space-x-4">
+                <a href="/" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+                <a href="/metrics" class="text-gray-600 hover:text-gray-900">Metrics</a>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        {{template "content" .}}
+    </main>
 </body>
 </html>

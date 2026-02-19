@@ -1,0 +1,24 @@
+{{define "search-form"}}
+<form hx-post="/v1/search" hx-target="#results" class="space-y-4">
+    <div>
+        <label class="block text-sm font-medium">Query</label>
+        <input type="text" name="q" class="input" placeholder="Search...">
+    </div>
+    <div>
+        <label class="block text-sm font-medium">Providers</label>
+        <select name="provider" class="input">
+            <option value="all">All</option>
+            <option value="qdrant">Qdrant</option>
+            <option value="weaviate">Weaviate</option>
+        </select>
+    </div>
+    <button type="submit" class="btn">Search</button>
+</form>
+{{end}}
+
+{{define "result-item"}}
+<div class="hit">
+    <div class="font-medium">{{.id}}</div>
+    <div class="text-sm text-gray-500">{{.provider}} - {{.score}}</div>
+</div>
+{{end}}

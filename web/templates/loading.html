@@ -1,0 +1,21 @@
+{{define "loading"}}
+<div class="loading-state" style="display:none;">
+    <div class="animate-pulse flex space-x-4">
+        <div class="flex-1 space-y-4 py-1">
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="space-y-2">
+                <div class="h-4 bg-gray-200 rounded"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.body.addEventListener('htmx:beforeRequest', function(e) {
+    document.querySelector('.loading-state').style.display = 'block';
+});
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    document.querySelector('.loading-state').style.display = 'none';
+});
+</script>
+{{end}}
