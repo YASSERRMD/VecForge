@@ -29,3 +29,9 @@ func handleSearchResults(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	template.Must(template.New("result").Parse(tmpl)).Execute(w, results[0])
 }
+
+type SearchRequest struct {
+	Query     string   `json:"q"`
+	Providers []string `json:"providers"`
+	Limit     int      `json:"limit"`
+}
