@@ -109,3 +109,20 @@ pub unsafe extern "C" fn vec_fuse_results_free(result: *mut Vec<Hit>) {
 pub unsafe extern "C" fn vec_get_error_code(_err: *const crate::error::VecForgeError) -> u32 {
     0
 }
+
+#[no_mangle]
+/// # Safety
+/// - `m` and `ef` must be valid HNSW parameters
+pub unsafe extern "C" fn vec_create_index(m: u32, ef: u32) -> *mut HNSWIndex {
+    let index = HNSWIndex::new(m as usize, ef as usize);
+    Box::into_raw(Box::new(index))
+}
+
+#[no_mangle]
+/// # Safety
+/// - `index` must be a valid pointer returned by vec_create_index
+pub unsafe extern "C" fn vec_destroy_index(index: *mut HNSWIndex) {
+    if !index.is_null() {
+        drop(Box::from_raw(index));
+    }
+}
