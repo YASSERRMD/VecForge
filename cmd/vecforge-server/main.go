@@ -11,99 +11,61 @@ import (
 	"time"
 )
 
-type SearchRequest struct {
-	Query     string   `json:"q"`
-	Providers []string `json:"providers"`
-	Limit     int      `json:"limit"`
+type Config struct {
+	ServerPort string `json:"server_port"`
+	RedisURL   string `json:"redis_url"`
+	QdrantURL  string `json:"qdrant_url"`
 }
 
-type Hit struct {
-	ID       string  `json:"id"`
-	Score   float64 `json:"score"`
-	Provider string `json:"provider"`
+func loadConfig() *Config {
+	return &Config{
+		ServerPort: getEnv("PORT", "8080"),
+		RedisURL:   getEnv("REDIS_URL", "redis://localhost:6379"),
+		QdrantURL:  getEnv("QDRANT_URL", "http://localhost:6333"),
+	}
 }
 
-type SearchResponse struct {
-	Hits      []Hit  `json:"hits"`
-	Query     string `json:"query"`
-	LatencyUs int64  `json:"latency_us"`
-	Provider  string `json:"provider"`
+func getEnv(k, v string) string {
+	if x := os.Getenv(k); x != "" {
+		return x
+	}
+	return v
 }
 
 func main() {
-	router := http.NewServeMux()
+	cfg := loadConfig()
+	log.Printf("Config: port=%s", cfg.ServerPort)
 
-	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("{\"status\":\"ok\"}"))
+	r := http.NewServeMux()
+	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{"status":"ok"}`))
 	})
+	r.HandleFunc("/v1/search", handleSearch)
 
-	router.HandleFunc("/v1/search", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-		var req SearchRequest
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, "invalid request", http.StatusBadRequest)
-			return
-		}
-		if req.Limit == 0 {
-			req.Limit = 10
-		}
-		resp := SearchResponse{
-			Hits: []Hit{
-				{ID: "doc_1", Score: 0.95, Provider: "qdrant"},
-				{ID: "doc_2", Score: 0.87, Provider: "weaviate"},
-			},
-			Query:     req.Query,
-			LatencyUs: 42,
-			Provider:  "fused",
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
-	})
-
-	srv := &http.Server{
-		Addr:         ":8080",
-		Handler:      requestIDMiddleware(loggingMiddleware(router)),
-		ReadTimeout:  15 * time.Second,
-		WriteTimeout: 15 * time.Second,
-	}
-
-	go func() {
-		log.Println("VecForge server starting on port 8080")
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Server failed: %v", err)
-		}
-	}()
+	srv := &http.Server{Addr: ":" + cfg.ServerPort, Handler: logging(r), ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second}
+	go srv.ListenAndServe()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Println("Shutting down server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	srv.Shutdown(context.Background())
+	log.Println("Server stopped")
+}
 
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("Server forced to shutdown: %v", err)
+func logging(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t := time.Now()
+		h.ServeHTTP(w, r)
+		log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(t))
+	})
+}
+
+func handleSearch(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
-
-	log.Println("Server exited")
-}
-
-func loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		next.ServeHTTP(w, r)
-		log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(start))
-	})
-}
-
-func requestIDMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := time.Now().Format("20060102150405")
-		w.Header().Set("X-Request-ID", id)
-		next.ServeHTTP(w, r)
-	})
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{"hits": []interface{}{}, "query": "", "latency_us": 42, "provider": "fused"})
 }
